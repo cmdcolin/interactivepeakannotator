@@ -13,7 +13,6 @@ function (
                 console.log(data);
                 if (data.length) {
                     const region = data[0];
-                    region.type = 'unknown';
                     const regions = JSON.parse(localStorage.getItem('ipaFeatures') || '[]');
                     regions.push(region);
                     localStorage.setItem('ipaFeatures', JSON.stringify(regions));
