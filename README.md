@@ -1,3 +1,5 @@
 # interactive_peak_annotator
 
-Template
+A method for interactively annotating peaks
+
+![](img/1.png)
