@@ -14,6 +14,7 @@ A method for interactively annotating peaks
 
 Please see http://gmod.org/wiki/JBrowse_FAQ#How_do_I_install_a_plugin for more information about installing plugins
 
+Relies on WiggleHighlighter to be installed also https://github.com/cmdcolin/wigglehighlighter
 
 ## Demo
 
