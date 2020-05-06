@@ -18,6 +18,7 @@ Relies on WiggleHighlighter to be installed also https://github.com/cmdcolin/wig
 
 ## Demo
 
-See http://localhost/?data=plugins/InteractivePeakAnnotator/test/data once you have installed for small demo dataset
+See https://cmdcolin.github.io/interactivepeakannotator/ for a small demo
 
 
+Try opening a track, using the highlight tool, and then clicking on the resulting highlighted region to switch between some predefined states
