@@ -10,7 +10,6 @@ function (
         constructor: function (args) {
             console.log('InteractivePeakAnnotator plugin starting');
             dojo.subscribe('/jbrowse/v1/n/globalHighlightChanged', function (data) {
-                console.log(data);
                 if (data.length) {
                     const region = data[0];
                     const regions = JSON.parse(localStorage.getItem('ipaFeatures') || '[]');
