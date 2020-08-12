@@ -31,11 +31,11 @@ function (
                 },
                 highlightColor: function (feature, track) {
                     var states = {0: '#f005', 1: '#0f05', 2: '#ff05'};
-                    return states[feature.get(track.name) || 0];
+                    return states[feature.data[track.name] || 0];
                 },
                 indicatorColor: function (feature, track) {
                     var states = {0: '#f00', 1: '#0f0', 2: '#ff0'};
-                    return states[feature.get(track.name) || 0];
+                    return states[feature.data[track.name] || 0];
                 }
             });
         }
