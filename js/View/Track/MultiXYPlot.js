@@ -32,10 +32,10 @@ function (
                                         //TODO: Fix this
                                         if (f[track.name]) {
                                             // increments the track type
-                                            f[track.name] = states[(f[track.name] + 1) % states.length];
+                                            f[track.name] = (f[track.name] + 1) % states.length;
                                         } else {
                                             // if the track has no type set to "Peak"
-                                            f[track.name] = 'unknown';
+                                            f[track.name] = 1;
                                         }
                                     }
                                 });
@@ -66,25 +66,26 @@ function (
                             // determins the color of the see through part of the label
                             // to add new type of label add type to this list
                             const states = {
-                                'unknown': 'rgba(100,100,100,.4)',
-                                'peak': '#0f05',
-                                'noPeak': '#ff05',
-                                'peakStart': 'rgba(255,0,0,0.4)',
-                                'peakEnd': 'rgba(255,150,0,0.4)'
-                            };
-                            return states[feature.data[track.name] || 'unknown'];
+                                0: 'rgba(100,100,100,.4)',
+                                1: 'rgba(180,167,214,0.4)',
+                                2: 'rgba(255,251,204,0.4)',
+                                3: 'rgba(255,210,241,0.4)',
+                                4: 'rgba(244,204,204,0.4)'
+
+                        };
+                            return states[feature.data[track.name] || 0];
                         },
 
                         indicatorColor: function (feature, track) {
                             // determins the color of the bar at the bottom of the label
                             // to add new type of label add type to this list
                             const states = {
-                                'unknown': '#f00',
-                                'peak': '#0f0',
-                                'noPeak': '#ff0',
-                                'peakStart': '#d3034f',
-                                'peakEnd': '#d30303'};
-                            return states[feature.data[track.name] || 'unknown'];
+                                0: 'rgb(100,100,100)',
+                                1: 'rgb(180,167,214)',
+                                2: 'rgb(255,251,204)',
+                                3: 'rgb(255,210,241)',
+                                4: 'rgb(244,204,204)'};
+                            return states[feature.data[track.name] || 0];
                         },
 
                         style:
@@ -92,7 +93,7 @@ function (
                             label: function( feature, track )
                             {
                                 const states = ['unknown', 'peak', 'noPeak', 'peakStart', 'peakEnd'];
-                                return states[feature.data[track.name] || 'unknown'];
+                                return states[feature.data[track.name] || 0];
                             }
                         }
                     });
