@@ -15,6 +15,9 @@ function (
                     {
                         showLabels: true,
                         onHighlightClick: function (feature, track) {
+                            // TODO: Fix all this
+                            console.log('Feature');
+                            console.log(feature);
                             // grab known labels and
                             let features = JSON.parse(localStorage.getItem('ipaFeatures'));
                             // eslint-disable-next-line radix
@@ -29,7 +32,6 @@ function (
                                     if (f.ref === feature.get('ref') &&
                                f.start === feature.get('start') &&
                                f.end === feature.get('end')) {
-                                        //TODO: Fix this
                                         if (f[track.name]) {
                                             // increments the track type
                                             f[track.name] = (f[track.name] + 1) % states.length;

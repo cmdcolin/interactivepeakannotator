@@ -19,6 +19,9 @@ function (
                     localStorage.setItem('highlightFlag', 1);
                     // add new highlight to storage
                     const region = data[0];
+                    console.log("data");
+                    console.log(data);
+                    // TODO: Make it so this saves new feature to server
                     const regions = JSON.parse(localStorage.getItem('ipaFeatures') || '[]');
                     regions.push(region);
                     localStorage.setItem('ipaFeatures', JSON.stringify(regions));
