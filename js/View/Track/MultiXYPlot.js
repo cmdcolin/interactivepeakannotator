@@ -15,12 +15,7 @@ function (
                     {
                         showLabels: true,
                         onHighlightClick: function (feature, track) {
-                            // TODO: Fix all this
-                            console.log('Feature');
-                            console.log(feature);
-                            // grab known labels and
-                            let features = JSON.parse(localStorage.getItem('ipaFeatures'));
-                            // eslint-disable-next-line radix
+                            // eslint-disable-next-line ra  dix
                             const highlightFlag = parseInt(localStorage.getItem('highlightFlag'));
                             // uses highlightFlag to determine if editing or removing
                             if (highlightFlag === 1) {
@@ -28,27 +23,26 @@ function (
                                 const states = ['unknown', 'peak', 'noPeak', 'peakStart', 'peakEnd'];
                                 // label add to this list and the two down below for determining the color
                                 // loops through known labels for the label clicked
-                                features.forEach(f => {
-                                    if (f.ref === feature.get('ref') &&
-                               f.start === feature.get('start') &&
-                               f.end === feature.get('end')) {
-                                        if (f[track.name]) {
-                                            // increments the track type
-                                            f[track.name] = (f[track.name] + 1) % states.length;
-                                        } else {
-                                            // if the track has no type set to "Peak"
-                                            f[track.name] = 1;
+
+                                for(i = 0; i < states.length; i++)
+                                {
+                                    if( feature.get('label') === states[i] )
+                                    {
+                                        var args = {
+                                            'name': track.name,
+                                            'ref': feature.get('ref'),
+                                            'start': feature.get('start'),
+                                            'end': feature.get('end'),
+                                            'label': states[(i+1)%states.length]
                                         }
+
+                                        sendPost('update', args);
+
+                                        break;
                                     }
-                                });
+                                }
                             } else {
-                                // loop through labels removing clicked one
-                                // eslint-disable-next-line consistent-return
-                                features = features.filter(function (f) {
-                                    if (f.start !== feature.get('start')) {
-                                        return f;
-                                    }
-                                });
+
                                 // json of information of removed label
                                 var removeJSON = {
                                     'name': track.name,
@@ -61,41 +55,39 @@ function (
                             }
                             // redraw to update model
                             track.browser.view.redrawTracks()
-                            localStorage.setItem('ipaFeatures', JSON.stringify(features));
                         },
 
                         highlightColor: function (feature, track) {
                             // determins the color of the see through part of the label
                             // to add new type of label add type to this list
                             const states = {
-                                0: 'rgba(100,100,100,.4)',
-                                1: 'rgba(180,167,214,0.4)',
-                                2: 'rgba(255,251,204,0.4)',
-                                3: 'rgba(255,210,241,0.4)',
-                                4: 'rgba(244,204,204,0.4)'
+                                'unknown': 'rgba(100,100,100,.4)',
+                                'peak': 'rgba(180,167,214,0.4)',
+                                'noPeak': 'rgba(255,251,204,0.4)',
+                                'peakStart': 'rgba(255,210,241,0.4)',
+                                'peakEnd': 'rgba(244,204,204,0.4)'
 
                         };
-                            return states[feature.data[track.name] || 0];
+                            return states[feature.get('label') || 'unknown'];
                         },
 
                         indicatorColor: function (feature, track) {
                             // determins the color of the bar at the bottom of the label
                             // to add new type of label add type to this list
                             const states = {
-                                0: 'rgb(100,100,100)',
-                                1: 'rgb(180,167,214)',
-                                2: 'rgb(255,251,204)',
-                                3: 'rgb(255,210,241)',
-                                4: 'rgb(244,204,204)'};
-                            return states[feature.data[track.name] || 0];
+                                'unknown': 'rgb(100,100,100)',
+                                'peak': 'rgb(180,167,214)',
+                                'noPeak': 'rgb(255,251,204)',
+                                'peakStart': 'rgb(255,210,241)',
+                                'peakEnd': 'rgb(244,204,204)'};
+                            return states[feature.get('label') || 'unknown'];
                         },
 
                         style:
                         {
                             label: function( feature, track )
                             {
-                                const states = ['unknown', 'peak', 'noPeak', 'peakStart', 'peakEnd'];
-                                return states[feature.data[track.name] || 0];
+                                return feature.get('label');
                             }
                         }
                     });
