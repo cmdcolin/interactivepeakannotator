@@ -21,27 +21,62 @@ function (
     SeqFeatureStore,
 ) {
     return declare([ SeqFeatureStore ], {
-        constructor: function( args )
-        {
-            // make sure the baseUrl has a trailing slash
-            this.baseUrl = args.baseUrl || this.config.baseUrl;
-            if( this.baseUrl.charAt( this.baseUrl.length-1 ) != '/' )
-                this.baseUrl = this.baseUrl + '/';
-
-            this.name = args.name;
-        },
         getFeatures(query, featureCallback, finishedCallback, errorCallback) {
-            let url = this.baseUrl + 'labels/' + query.ref;
-            let queryVals = '?start='+query.start+'&end='+query.end+'&name='+this.name;
 
-            let callback = dojo.hitch(this, '_makeFeatures', featureCallback, finishedCallback, errorCallback)
+            var features = localStorage.getItem(this.config.label);
+            if(features)
+            {
+                features = JSON.parse(features);
+                features.forEach(data => {
+                   featureCallback(new SimpleFeature({data}))
+                });
+            }
+        },
+        addFeature: function(query){
+            var features = JSON.parse(localStorage.getItem(this.config.label) || '[]');
 
-            url +=queryVals;
+            var toAdd = query;
+            // Default value
+            toAdd['label'] = 'unknown';
 
-            dojoRequest( url, {
-                method: 'GET',
-                handleAs: 'json'
-            }).then(callback, this._errorHandler(errorCallback));
+            features.push(toAdd);
+
+            localStorage.setItem(this.config.label, JSON.stringify(features))
+
+            console.log(features);
+        },
+        updateFeature(query)
+        {
+            var features = JSON.parse(localStorage.getItem(this.config.label));
+
+            features = features.filter(function(f)
+            {
+                //If it isn't the value we are looking for
+                if(f.start === query['start'] || f.ref === query['ref'] || f.end === query['end'])
+                {
+                    f.label = query['label'];
+
+                    return f;
+                }
+                return f;
+            });
+
+            localStorage.setItem(this.config.label, JSON.stringify(features))
+        },
+        removeFeature(query)
+        {
+            var features = JSON.parse(localStorage.getItem(this.config.label));
+
+            features = features.filter(function(f)
+            {
+                //If it isn't the value we are looking for
+               if(f.start !== query['start'] || f.ref !== query['ref'] || f.end !== query['end'])
+               {
+                   return f;
+               }
+            });
+
+            localStorage.setItem(this.config.label, JSON.stringify(features))
         },
         _makeFeatures: function( featureCallback, endCallback, errorCallback, featureData ) {
             let features

@@ -10,10 +10,27 @@ function (
 ) {
     return declare([ XYPlot],
         {
+            constructor: function(args)
+            {
+                var newLabel = (data) => {
+                    if (data.length) {
+                        // flag set to editing
+                        localStorage.setItem('highlightFlag', 1);
+                        // add new highlight to storage
+                        var dataVal = data[0];
+                        dataVal['name'] = this.name;
+                        this.highlightStore.addFeature(dataVal);
+                    } else {
+                        // flag set to removing
+                        localStorage.setItem('highlightFlag', 0);
+                    }
+                };
+
+                dojo.subscribe('/jbrowse/v1/n/globalHighlightChanged', newLabel)
+            },
             _defaultConfig: function () {
                 return Util.deepUpdate(dojo.clone(this.inherited(arguments)),
                     {
-                        showLabels: true,
                         onHighlightClick: function (feature, track) {
                             // eslint-disable-next-line ra  dix
                             const highlightFlag = parseInt(localStorage.getItem('highlightFlag'));
@@ -29,15 +46,12 @@ function (
                                     if( feature.get('label') === states[i] )
                                     {
                                         var args = {
-                                            'name': track.name,
                                             'ref': feature.get('ref'),
                                             'start': feature.get('start'),
                                             'end': feature.get('end'),
                                             'label': states[(i+1)%states.length]
                                         }
-
-                                        sendPost('update', args);
-
+                                        this.highlightStore.updateFeature(args);
                                         break;
                                     }
                                 }
@@ -45,13 +59,11 @@ function (
 
                                 // json of information of removed label
                                 var removeJSON = {
-                                    'name': track.name,
                                     'ref': feature.get('ref'),
                                     'start': feature.get('start'),
                                     'end': feature.get('end')
                                 };
-                                // eslint-disable-next-line no-undef
-                                sendPost('remove', removeJSON);
+                                this.highlightStore.removeFeature(removeJSON);
                             }
                             // redraw to update model
                             track.browser.view.redrawTracks()
@@ -89,8 +101,10 @@ function (
                             {
                                 return feature.get('label');
                             }
-                        }
+                        },
+
+
                     });
-            }
+            },
     });
 });
