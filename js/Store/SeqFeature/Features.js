@@ -21,54 +21,61 @@ function (
     SeqFeatureStore,
 ) {
     return declare([ SeqFeatureStore ], {
-        constructor: function( args )
-        {
-            // make sure the baseUrl has a trailing slash
-            this.baseUrl = args.baseUrl || this.config.baseUrl;
-            if( this.baseUrl.charAt( this.baseUrl.length-1 ) != '/' )
-                this.baseUrl = this.baseUrl + '/';
-
-            this.name = args.name;
-        },
         getFeatures(query, featureCallback, finishedCallback, errorCallback) {
-            let url = this.baseUrl + 'labels/' + query.ref;
-            let queryVals = '?start='+query.start+'&end='+query.end+'&name='+this.name;
 
-            let callback = dojo.hitch(this, '_makeFeatures', featureCallback, finishedCallback, errorCallback)
-
-            url +=queryVals;
-
-            dojoRequest( url, {
-                method: 'GET',
-                handleAs: 'json'
-            }).then(callback, this._errorHandler(errorCallback));
-        },
-        _makeFeatures: function( featureCallback, endCallback, errorCallback, featureData ) {
-            let features
-            if( featureData && ( features = featureData.features ) ) {
+            var features = localStorage.getItem(this.config.label);
+            if(features)
+            {
+                features = JSON.parse(features);
                 features.forEach(data => {
-                    featureCallback(new SimpleFeature({ data }))
-                })
+                   featureCallback(new SimpleFeature({data}))
+                });
             }
-            endCallback();
         },
-        // Aquired from jbrowse/Store/SeqFeature/REST.js
-        _errorHandler: function( handler ) {
-            handler = handler || function(e) {
-                console.error( e, e.stack );
-                throw e;
-            };
-            return dojo.hitch( this, function( error ) {
-                var httpStatus = ((error||{}).response||{}).status;
-                if( httpStatus >= 400 ) {
-                    handler( "HTTP " + httpStatus + " fetching "+error.response.url+" : "+error.response.text );
-                }
-                else {
-                    handler( error );
-                }
-            });
-        },
+        addFeature: function(query){
+            var features = JSON.parse(localStorage.getItem(this.config.label) || '[]');
 
+            var toAdd = query;
+            // Default value
+            toAdd['label'] = 'unknown';
+
+            features.push(toAdd);
+
+            localStorage.setItem(this.config.label, JSON.stringify(features));
+        },
+        updateFeature(query)
+        {
+            var features = JSON.parse(localStorage.getItem(this.config.label));
+
+            features = features.filter(function(f)
+            {
+                //If it isn't the value we are looking for
+                if(f.start === query['start'] || f.ref === query['ref'] || f.end === query['end'])
+                {
+                    f.label = query['label'];
+
+                    return f;
+                }
+                return f;
+            });
+
+            localStorage.setItem(this.config.label, JSON.stringify(features))
+        },
+        removeFeature(query)
+        {
+            var features = JSON.parse(localStorage.getItem(this.config.label));
+
+            features = features.filter(function(f)
+            {
+                //If it isn't the value we are looking for
+               if(f.start !== query['start'] || f.ref !== query['ref'] || f.end !== query['end'])
+               {
+                   return f;
+               }
+            });
+
+            localStorage.setItem(this.config.label, JSON.stringify(features))
+        },
         saveStore() {
             return {
                 urlTemplate: this.config.blob.url
