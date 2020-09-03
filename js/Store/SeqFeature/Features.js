@@ -78,32 +78,6 @@ function (
 
             localStorage.setItem(this.config.label, JSON.stringify(features))
         },
-        _makeFeatures: function( featureCallback, endCallback, errorCallback, featureData ) {
-            let features
-            if( featureData && ( features = featureData.features ) ) {
-                features.forEach(data => {
-                    featureCallback(new SimpleFeature({ data }))
-                })
-            }
-            endCallback();
-        },
-        // Aquired from jbrowse/Store/SeqFeature/REST.js
-        _errorHandler: function( handler ) {
-            handler = handler || function(e) {
-                console.error( e, e.stack );
-                throw e;
-            };
-            return dojo.hitch( this, function( error ) {
-                var httpStatus = ((error||{}).response||{}).status;
-                if( httpStatus >= 400 ) {
-                    handler( "HTTP " + httpStatus + " fetching "+error.response.url+" : "+error.response.text );
-                }
-                else {
-                    handler( error );
-                }
-            });
-        },
-
         saveStore() {
             return {
                 urlTemplate: this.config.blob.url
