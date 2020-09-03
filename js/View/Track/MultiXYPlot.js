@@ -32,8 +32,6 @@ function (
                             const states = ['unknown', 'peak', 'noPeak', 'peakStart', 'peakEnd'];
                             // label add to this list and the two down below for determining the color
                             // loops through known labels for the label clicked
-
-
                             for(i = 0; i < states.length; i++)
                             {
                                 if( feature.get('label') === states[i] )

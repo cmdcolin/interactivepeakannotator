@@ -35,8 +35,6 @@ function (
         addFeature: function(query){
             var features = JSON.parse(localStorage.getItem(this.config.label) || '[]');
 
-            console.log(this);
-
             query['label'] = 'unknown';
 
             features.push(query);

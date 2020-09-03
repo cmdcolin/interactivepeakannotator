@@ -10,7 +10,6 @@ function (
         // eslint-disable-next-line no-unused-vars
         constructor: function (args) {
             console.log('InteractivePeakAnnotator plugin starting');
-            localStorage.setItem('highlightFlag', 0);
         }
     });
 });
