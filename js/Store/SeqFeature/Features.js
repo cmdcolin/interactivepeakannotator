@@ -35,11 +35,11 @@ function (
         addFeature: function(query){
             var features = JSON.parse(localStorage.getItem(this.config.label) || '[]');
 
-            var toAdd = query;
-            // Default value
-            toAdd['label'] = 'unknown';
+            console.log(this);
 
-            features.push(toAdd);
+            query['label'] = 'unknown';
+
+            features.push(query);
 
             localStorage.setItem(this.config.label, JSON.stringify(features));
         },

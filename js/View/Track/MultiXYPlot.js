@@ -14,15 +14,11 @@ function (
             {
                 var newLabel = (data) => {
                     if (data.length) {
-                        // flag set to editing
-                        localStorage.setItem('highlightFlag', 1);
                         // add new highlight to storage
                         var dataVal = data[0];
                         dataVal['name'] = this.name;
                         this.highlightStore.addFeature(dataVal);
-                    } else {
-                        // flag set to removing
-                        localStorage.setItem('highlightFlag', 0);
+                        args.browser.clearHighlight();
                     }
                 };
 
@@ -32,43 +28,41 @@ function (
                 return Util.deepUpdate(dojo.clone(this.inherited(arguments)),
                     {
                         onHighlightClick: function (feature, track) {
-                            // eslint-disable-next-line ra  dix
-                            const highlightFlag = parseInt(localStorage.getItem('highlightFlag'));
-                            // uses highlightFlag to determine if editing or removing
-                            if (highlightFlag === 1) {
-                                // this is wear we define the types of labels, to create a new kind of
-                                const states = ['unknown', 'peak', 'noPeak', 'peakStart', 'peakEnd'];
-                                // label add to this list and the two down below for determining the color
-                                // loops through known labels for the label clicked
+                            // this is wear we define the types of labels, to create a new kind of
+                            const states = ['unknown', 'peak', 'noPeak', 'peakStart', 'peakEnd'];
+                            // label add to this list and the two down below for determining the color
+                            // loops through known labels for the label clicked
 
-                                for(i = 0; i < states.length; i++)
+
+                            for(i = 0; i < states.length; i++)
+                            {
+                                if( feature.get('label') === states[i] )
                                 {
-                                    if( feature.get('label') === states[i] )
-                                    {
-                                        var args = {
-                                            'ref': feature.get('ref'),
-                                            'start': feature.get('start'),
-                                            'end': feature.get('end'),
-                                            'label': states[(i+1)%states.length]
-                                        }
-                                        this.highlightStore.updateFeature(args);
-                                        break;
+                                    var args = {
+                                        'ref': feature.get('ref'),
+                                        'start': feature.get('start'),
+                                        'end': feature.get('end'),
+                                        'label': states[(i+1)%states.length]
                                     }
+                                    this.highlightStore.updateFeature(args);
+                                    break;
                                 }
-                            } else {
-
-                                // json of information of removed label
-                                var removeJSON = {
-                                    'ref': feature.get('ref'),
-                                    'start': feature.get('start'),
-                                    'end': feature.get('end')
-                                };
-                                this.highlightStore.removeFeature(removeJSON);
                             }
+
+                            track.browser.view.redrawTracks();
+                        },
+                        onHighlightRightClick: function( feature, track ) {
+                            // json of information of removed label
+                            var removeJSON = {
+                                'ref': feature.get('ref'),
+                                'start': feature.get('start'),
+                                'end': feature.get('end')
+                            };
+
+                            this.highlightStore.removeFeature(removeJSON);
                             // redraw to update model
                             track.browser.view.redrawTracks()
                         },
-
                         highlightColor: function (feature, track) {
                             // determins the color of the see through part of the label
                             // to add new type of label add type to this list
@@ -83,7 +77,7 @@ function (
                             return states[feature.get('label') || 'unknown'];
                         },
 
-                        indicatorColor: function (feature, track) {
+                        indicatorColor: function (feature, track ) {
                             // determins the color of the bar at the bottom of the label
                             // to add new type of label add type to this list
                             const states = {
