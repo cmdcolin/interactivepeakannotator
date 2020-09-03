@@ -41,9 +41,7 @@ function (
 
             features.push(toAdd);
 
-            localStorage.setItem(this.config.label, JSON.stringify(features))
-
-            console.log(features);
+            localStorage.setItem(this.config.label, JSON.stringify(features));
         },
         updateFeature(query)
         {
