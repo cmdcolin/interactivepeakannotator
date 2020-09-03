@@ -50,7 +50,7 @@ function (
             features = features.filter(function(f)
             {
                 //If it isn't the value we are looking for
-                if(f.start === query['start'] || f.ref === query['ref'] || f.end === query['end'])
+                if(f.start === query['start'] && f.ref === query['ref'] && f.end === query['end'])
                 {
                     f.label = query['label'];
 

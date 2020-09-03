@@ -1,3 +1,6 @@
+# 1.0.2
+- Rework of labels system, now allows for custom backends
+
 # 1.0.1
 
 - Add color callback from the indicatorColor and highlighterColor configs
