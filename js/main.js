@@ -7,17 +7,9 @@ function (
     JBrowsePlugin
 ) {
     return declare(JBrowsePlugin, {
+        // eslint-disable-next-line no-unused-vars
         constructor: function (args) {
             console.log('InteractivePeakAnnotator plugin starting');
-            dojo.subscribe('/jbrowse/v1/n/globalHighlightChanged', function (data) {
-                if (data.length) {
-                    const region = data[0];
-                    const regions = JSON.parse(localStorage.getItem('ipaFeatures') || '[]');
-                    regions.push(region);
-                    localStorage.setItem('ipaFeatures', JSON.stringify(regions));
-                    args.browser.clearHighlight();
-                }
-            });
         }
     });
 });
