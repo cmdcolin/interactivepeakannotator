@@ -47,7 +47,7 @@ function (
                                 }
                             }
 
-                            track.browser.view.redrawTracks();
+                            track.redraw();
                         },
                         onHighlightRightClick: function( feature, track ) {
                             // json of information of removed label
@@ -59,7 +59,9 @@ function (
 
                             this.highlightStore.removeFeature(removeJSON);
                             // redraw to update model
-                            track.browser.view.redrawTracks()
+                            track.redraw();
+
+                            return false;
                         },
                         highlightColor: function (feature, track) {
                             // determins the color of the see through part of the label
