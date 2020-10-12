@@ -32,7 +32,7 @@ function (
                 });
             }
         },
-        addFeature: function(query){
+        addFeature: function(query, callback){
             var features = JSON.parse(localStorage.getItem(this.config.label) || '[]');
 
             query['label'] = 'unknown';
@@ -40,8 +40,10 @@ function (
             features.push(query);
 
             localStorage.setItem(this.config.label, JSON.stringify(features));
+
+            callback()
         },
-        updateFeature(query)
+        updateFeature(query, callback)
         {
             var features = JSON.parse(localStorage.getItem(this.config.label));
 
@@ -58,8 +60,10 @@ function (
             });
 
             localStorage.setItem(this.config.label, JSON.stringify(features))
+
+            callback()
         },
-        removeFeature(query)
+        removeFeature(query, callback)
         {
             var features = JSON.parse(localStorage.getItem(this.config.label));
 
@@ -73,6 +77,8 @@ function (
             });
 
             localStorage.setItem(this.config.label, JSON.stringify(features))
+
+            callback()
         },
         saveStore() {
             return {

@@ -12,14 +12,17 @@ function (
         {
             constructor: function(args)
             {
-                var newLabel = (data) => {
+                const newCallback = () => {
+                    args.browser.clearHighlight();
+                    this.browser.view.behaviorManager.swapBehaviors('highlightingMouse', 'normalMouse');
+                };
+
+                const newLabel = (data) => {
                     if (data.length) {
                         // add new highlight to storage
                         var dataVal = data[0];
                         dataVal['name'] = this.name;
-                        this.highlightStore.addFeature(dataVal);
-                        args.browser.clearHighlight();
-                        this.browser.view.behaviorManager.swapBehaviors('highlightingMouse', 'normalMouse');
+                        this.highlightStore.addFeature(dataVal, newCallback);
                     }
                 };
 
@@ -43,12 +46,13 @@ function (
                                         'end': feature.get('end'),
                                         'label': states[(i+1)%states.length]
                                     }
-                                    this.highlightStore.updateFeature(args);
+                                    redrawCallback = () => {
+                                        track.redraw()
+                                    }
+                                    this.highlightStore.updateFeature(args, redrawCallback);
                                     break;
                                 }
                             }
-
-                            track.redraw();
                         },
                         onHighlightRightClick: function( feature, track ) {
                             // json of information of removed label
@@ -58,11 +62,11 @@ function (
                                 'end': feature.get('end')
                             };
 
-                            this.highlightStore.removeFeature(removeJSON);
-                            // redraw to update model
-                            track.redraw();
+                            redrawCallback = () => {
+                                        track.redraw()
+                                    }
 
-                            return false;
+                            this.highlightStore.removeFeature(removeJSON, redrawCallback());
                         },
                         highlightColor: function (feature, track) {
                             // determins the color of the see through part of the label
