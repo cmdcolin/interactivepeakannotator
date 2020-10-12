@@ -12,17 +12,14 @@ function (
         {
             constructor: function(args)
             {
-                const newCallback = () => {
-                    args.browser.clearHighlight();
-                    this.browser.view.behaviorManager.swapBehaviors('highlightingMouse', 'normalMouse');
-                };
-
-                const newLabel = (data) => {
+                let newLabel = (data) => {
                     if (data.length) {
                         // add new highlight to storage
                         var dataVal = data[0];
                         dataVal['name'] = this.name;
-                        this.highlightStore.addFeature(dataVal, newCallback);
+                        this.highlightStore.addFeature(dataVal);
+                        this.browser.clearHighlight();
+                        this.browser.view.behaviorManager.swapBehaviors('highlightingMouse', 'normalMouse');
                     }
                 };
 
