@@ -37,13 +37,13 @@ function (
                             {
                                 if( feature.get('label') === states[i] )
                                 {
-                                    var args = {
+                                    let args = {
                                         'ref': feature.get('ref'),
                                         'start': feature.get('start'),
                                         'end': feature.get('end'),
                                         'label': states[(i+1)%states.length]
                                     }
-                                    redrawCallback = () => {
+                                    let redrawCallback = () => {
                                         track.redraw()
                                     }
                                     this.highlightStore.updateFeature(args, redrawCallback);
@@ -53,13 +53,13 @@ function (
                         },
                         onHighlightRightClick: function( feature, track ) {
                             // json of information of removed label
-                            var removeJSON = {
+                            let removeJSON = {
                                 'ref': feature.get('ref'),
                                 'start': feature.get('start'),
                                 'end': feature.get('end')
                             };
 
-                            redrawCallback = () => {
+                            let redrawCallback = () => {
                                         track.redraw()
                                     }
 
