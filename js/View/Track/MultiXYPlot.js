@@ -60,10 +60,11 @@ function (
                             };
 
                             let redrawCallback = () => {
+
                                         track.redraw()
                                     }
 
-                            this.highlightStore.removeFeature(removeJSON, redrawCallback());
+                            this.highlightStore.removeFeature(removeJSON, redrawCallback);
                         },
                         highlightColor: function (feature, track) {
                             // determins the color of the see through part of the label
