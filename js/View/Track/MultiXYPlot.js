@@ -12,13 +12,14 @@ function (
         {
             constructor: function(args)
             {
-                var newLabel = (data) => {
+                let newLabel = (data) => {
                     if (data.length) {
                         // add new highlight to storage
                         var dataVal = data[0];
                         dataVal['name'] = this.name;
                         this.highlightStore.addFeature(dataVal);
-                        args.browser.clearHighlight();
+                        this.browser.clearHighlight();
+                        this.browser.view.behaviorManager.swapBehaviors('highlightingMouse', 'normalMouse');
                     }
                 };
 
@@ -32,34 +33,38 @@ function (
                             const states = ['unknown', 'peak', 'noPeak', 'peakStart', 'peakEnd'];
                             // label add to this list and the two down below for determining the color
                             // loops through known labels for the label clicked
-                            for(i = 0; i < states.length; i++)
+                            for(let i = 0; i < states.length; i++)
                             {
                                 if( feature.get('label') === states[i] )
                                 {
-                                    var args = {
+                                    let args = {
                                         'ref': feature.get('ref'),
                                         'start': feature.get('start'),
                                         'end': feature.get('end'),
                                         'label': states[(i+1)%states.length]
                                     }
-                                    this.highlightStore.updateFeature(args);
+                                    let redrawCallback = () => {
+                                        track.redraw()
+                                    }
+                                    this.highlightStore.updateFeature(args, redrawCallback);
                                     break;
                                 }
                             }
-
-                            track.browser.view.redrawTracks();
                         },
                         onHighlightRightClick: function( feature, track ) {
                             // json of information of removed label
-                            var removeJSON = {
+                            let removeJSON = {
                                 'ref': feature.get('ref'),
                                 'start': feature.get('start'),
                                 'end': feature.get('end')
                             };
 
-                            this.highlightStore.removeFeature(removeJSON);
-                            // redraw to update model
-                            track.browser.view.redrawTracks()
+                            let redrawCallback = () => {
+
+                                        track.redraw()
+                                    }
+
+                            this.highlightStore.removeFeature(removeJSON, redrawCallback);
                         },
                         highlightColor: function (feature, track) {
                             // determins the color of the see through part of the label
