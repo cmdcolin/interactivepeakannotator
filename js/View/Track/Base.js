@@ -70,13 +70,11 @@ define([
                     // determins the color of the see through part of the label
                     // to add new type of label add type to this list
                     const states = {
-                        'unknown': 'rgba(100,100,100,.4)',
-                        'peak': 'rgba(180,167,214,0.4)',
-                        'noPeak': 'rgba(255,251,204,0.4)',
-                        'peakStart': 'rgba(255,210,241,0.4)',
-                        'peakEnd': 'rgba(244,204,204,0.4)'
-
-                };
+                                'unknown': 'rgba(100,100,100,.4)',
+                                'peak': 'rgba(180,167,214,0.4)',
+                                'noPeak': 'rgba(255,250,150,0.4)',
+                                'peakStart': 'rgba(255,180,235,0.4)',
+                                'peakEnd': 'rgba(244,185,185,0.4)'};
                     return states[feature.get('label') || 'unknown'];
                 },
 
@@ -84,11 +82,11 @@ define([
                     // determins the color of the bar at the bottom of the label
                     // to add new type of label add type to this list
                     const states = {
-                        'unknown': 'rgb(100,100,100)',
-                        'peak': 'rgb(180,167,214)',
-                        'noPeak': 'rgb(255,251,204)',
-                        'peakStart': 'rgb(255,210,241)',
-                        'peakEnd': 'rgb(244,204,204)'};
+                                'unknown': 'rgb(100,100,100)',
+                                'peak': 'rgb(180,167,214)',
+                                'noPeak': 'rgb(255,245,150)',
+                                'peakStart': 'rgb(255,210,241)',
+                                'peakEnd': 'rgb(244,204,204)'};
                     return states[feature.get('label') || 'unknown'];
                 },
 
