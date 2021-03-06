@@ -14,10 +14,6 @@ define([
       constructor: function(args)
       {
         let newLabel = (data) => {
-            console.log('new label start')
-            console.log(this)
-            console.log(data)
-            console.log('new label end')
             if (data.length) {
                 // add new highlight to storage
                 var dataVal = data[0];
@@ -61,7 +57,6 @@ define([
                 },
                 onHighlightRightClick: function( feature, track, event ) {
                     // json of information of removed label
-                    console.log(event)
                     var menu = new Menu()
                     menu.addChild(new MenuItem({
                         label: "Delete Label",
