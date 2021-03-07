@@ -2,11 +2,14 @@ define([
   'dojo/_base/declare',
   'dojo/on',
   'dojo/mouse',
+  'dojo/dom-construct',
   'dijit/Dialog',
   'JBrowse/Util',
+  'dijit/Menu',
+  'dijit/MenuItem',
   'JBrowse/Store/SeqFeature/BigBed',
   'JBrowse/View/Track/_FeatureDetailMixin',
-], function (declare, on, mouse, Dialog, Util, BigBed, FeatureDetailMixin) {
+], function (declare, on, mouse, domConstruct, Dialog, Util, Menu, MenuItem, BigBed, FeatureDetailMixin) {
   return declare(FeatureDetailMixin, {
       constructor: function(args)
       {
@@ -29,7 +32,7 @@ define([
     _defaultConfig: function () {
         return Util.deepUpdate(dojo.clone(this.inherited(arguments)),
             {
-                onHighlightClick: function (feature, track) {
+                onHighlightClick: function (feature, track, event) {
                     // this is wear we define the types of labels, to create a new kind of
                     const states = ['unknown', 'peak', 'noPeak', 'peakStart', 'peakEnd'];
                     // label add to this list and the two down below for determining the color
@@ -52,19 +55,26 @@ define([
                         }
                     }
                 },
-                onHighlightRightClick: function( feature, track ) {
+                onHighlightRightClick: function( feature, track, event ) {
                     // json of information of removed label
-                    let removeJSON = {
-                        'ref': feature.get('ref'),
-                        'start': feature.get('start'),
-                        'end': feature.get('end')
-                    };
+                    var menu = new Menu()
+                    menu.addChild(new MenuItem({
+                        label: "Delete Label",
+                        iconClass: "dijitIconDelete",
+                        onClick: (e) =>
+                        {
+                         let removeJSON = {
+                             'ref': feature.get('ref'),
+                             'start': feature.get('start'),
+                             'end': feature.get('end')};
+                         let redrawCallback = () => {
+                             track.redraw()
+                         }
 
-                    let redrawCallback = () => {
-                                track.redraw()
-                            }
-
-                    this.highlightStore.removeFeature(removeJSON, redrawCallback);
+                         this.highlightStore.removeFeature(removeJSON, redrawCallback);
+                        }}))
+                    menu.startup();
+                    menu.bindDomNode(event.target)
                 },
                 highlightColor: function (feature, track) {
                     // determins the color of the see through part of the label
