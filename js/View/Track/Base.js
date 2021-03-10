@@ -1,15 +1,18 @@
 define([
   'dojo/_base/declare',
+  'dojo/parser',
   'dojo/on',
   'dojo/mouse',
+  'dojo/dom',
   'dojo/dom-construct',
   'dijit/Dialog',
+  'dijit/form/Select',
   'JBrowse/Util',
   'dijit/Menu',
   'dijit/MenuItem',
   'JBrowse/Store/SeqFeature/BigBed',
   'JBrowse/View/Track/_FeatureDetailMixin',
-], function (declare, on, mouse, domConstruct, Dialog, Util, Menu, MenuItem, BigBed, FeatureDetailMixin) {
+], function (declare, parser, on, mouse, dom, domConstruct, Dialog, Select, Util, Menu, MenuItem, BigBed, FeatureDetailMixin) {
   return declare(FeatureDetailMixin, {
       constructor: function(args)
       {
@@ -19,14 +22,18 @@ define([
                 var dataVal = data[0];
                 dataVal['name'] = this.name;
                 let addCallback = function(data){
-                    console.log(data);
+                    //console.log(data);
                 }
-                this.highlightStore.addFeature(dataVal, addCallback);
+                if(this.shown){
+                    let currentLabel = dijit.byId('current-label');
+                    dataVal['label'] = currentLabel.value;
+                    this.highlightStore.addFeature(dataVal, addCallback);
+                }
                 this.browser.clearHighlight();
                 this.browser.view.behaviorManager.swapBehaviors('highlightingMouse', 'normalMouse');
             }
-        };
 
+        };
         dojo.subscribe('/jbrowse/v1/n/globalHighlightChanged', newLabel)
     },
     _defaultConfig: function () {
@@ -34,7 +41,7 @@ define([
             {
                 onHighlightClick: function (feature, track, event) {
                     // this is wear we define the types of labels, to create a new kind of
-                    const states = ['unknown', 'peak', 'noPeak', 'peakStart', 'peakEnd'];
+                    const states = ['unknown', 'peakStart', 'peakEnd', 'noPeak'];
                     // label add to this list and the two down below for determining the color
                     // loops through known labels for the label clicked
                     for(let i = 0; i < states.length; i++)
@@ -57,7 +64,7 @@ define([
                 },
                 onHighlightRightClick: function( feature, track, event ) {
                     // json of information of removed label
-                    var menu = new Menu()
+                    let menu = new Menu()
                     menu.addChild(new MenuItem({
                         label: "Delete Label",
                         iconClass: "dijitIconDelete",
@@ -81,7 +88,6 @@ define([
                     // to add new type of label add type to this list
                     const states = {
                                 'unknown': 'rgba(100,100,100,.4)',
-                                'peak': 'rgba(180,167,214,0.4)',
                                 'noPeak': 'rgba(255,250,150,0.4)',
                                 'peakStart': 'rgba(255,180,235,0.4)',
                                 'peakEnd': 'rgba(244,185,185,0.4)'};
@@ -93,7 +99,6 @@ define([
                     // to add new type of label add type to this list
                     const states = {
                                 'unknown': 'rgb(100,100,100)',
-                                'peak': 'rgb(180,167,214)',
                                 'noPeak': 'rgb(255,245,150)',
                                 'peakStart': 'rgb(255,210,241)',
                                 'peakEnd': 'rgb(244,204,204)'};
