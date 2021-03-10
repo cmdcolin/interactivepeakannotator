@@ -16,8 +16,7 @@ function (
             var thisB = this;
             console.log('InteractivePeakAnnotator plugin starting test');
             let browser = this.browser;
-            let labelOptions = [{label:"unknown", value: "unknown", selected: true},
-                                {label: "peakStart", value: "peakStart"},
+            let labelOptions = [{label: "peakStart", value: "peakStart", selected: true},
                                 {label: "peakEnd", value: "peakEnd"},
                                 {label: "noPeak", value: "noPeak"}]
             browser.afterMilestone('initView', function () {

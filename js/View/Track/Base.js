@@ -41,7 +41,7 @@ define([
             {
                 onHighlightClick: function (feature, track, event) {
                     // this is wear we define the types of labels, to create a new kind of
-                    const states = ['unknown', 'peakStart', 'peakEnd', 'noPeak'];
+                    const states = ['peakStart', 'peakEnd', 'noPeak'];
                     // label add to this list and the two down below for determining the color
                     // loops through known labels for the label clicked
                     for(let i = 0; i < states.length; i++)
@@ -87,7 +87,6 @@ define([
                     // determins the color of the see through part of the label
                     // to add new type of label add type to this list
                     const states = {
-                                'unknown': 'rgba(100,100,100,.4)',
                                 'noPeak': 'rgba(255,250,150,0.4)',
                                 'peakStart': 'rgba(255,180,235,0.4)',
                                 'peakEnd': 'rgba(244,185,185,0.4)'};
@@ -98,7 +97,6 @@ define([
                     // determins the color of the bar at the bottom of the label
                     // to add new type of label add type to this list
                     const states = {
-                                'unknown': 'rgb(100,100,100)',
                                 'noPeak': 'rgb(255,245,150)',
                                 'peakStart': 'rgb(255,210,241)',
                                 'peakEnd': 'rgb(244,204,204)'};
