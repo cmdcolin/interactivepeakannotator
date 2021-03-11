@@ -35,8 +35,6 @@ function (
         addFeature: function(query, callback){
             var features = JSON.parse(localStorage.getItem(this.config.label) || '[]');
 
-            query['label'] = 'unknown';
-
             features.push(query);
 
             localStorage.setItem(this.config.label, JSON.stringify(features));
@@ -63,6 +61,35 @@ function (
 
             callback()
         },
+        updateAlignedFeatures(query, callback)
+        {
+            let currentStore = this.config.storeClass;
+
+            this.browser.view.tracks.forEach(track => {
+                if(track.config.storeConf)
+                {
+                    if(track.config.storeConf.storeClass === currentStore)
+                    {
+                        let trackFeatures = JSON.parse(localStorage.getItem(track.config.label))
+
+                        let outputFeatures = trackFeatures.filter(function(f)
+                        {
+                            //If it isn't the value we are looking for
+                            if(f.start === query['start'] && f.ref === query['ref'] && f.end === query['end'])
+                            {
+                                f.label = query['label'];
+
+                                return f;
+                            }
+                            return f;
+                        });
+
+                        localStorage.setItem(track.config.label, JSON.stringify(outputFeatures))
+                    }
+                }
+            })
+            callback();
+        },
         removeFeature(query, callback)
         {
             var features = JSON.parse(localStorage.getItem(this.config.label));
@@ -79,6 +106,32 @@ function (
             localStorage.setItem(this.config.label, JSON.stringify(features))
 
             callback()
+        },
+        removeAlignedFeatures(query, callback)
+        {
+            let currentStore = this.config.storeClass;
+
+            this.browser.view.tracks.forEach(track => {
+                if(track.config.storeConf)
+                {
+                    if (track.config.storeConf.storeClass === currentStore)
+                    {
+                        let trackFeatures = JSON.parse(localStorage.getItem(track.config.label));
+
+                        let outputFeatures = trackFeatures.filter(function(f)
+                        {
+                           if(f.start !== query['start'] || f.ref !== query['ref'] || f.end !== query['end'])
+                           {
+                               return f;
+                           }
+                        });
+
+                        localStorage.setItem(track.config.label, JSON.stringify(outputFeatures));
+                    }
+                }
+            });
+
+            callback();
         },
         saveStore() {
             return {

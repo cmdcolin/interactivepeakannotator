@@ -10,9 +10,10 @@ define([
   'JBrowse/Util',
   'dijit/Menu',
   'dijit/MenuItem',
+  'dijit/PopupMenuItem',
   'JBrowse/Store/SeqFeature/BigBed',
   'JBrowse/View/Track/_FeatureDetailMixin',
-], function (declare, parser, on, mouse, dom, domConstruct, Dialog, Select, Util, Menu, MenuItem, BigBed, FeatureDetailMixin) {
+], function (declare, parser, on, mouse, dom, domConstruct, Dialog, Select, Util, Menu, MenuItem, PopupMenuItem, BigBed, FeatureDetailMixin) {
   return declare(FeatureDetailMixin, {
       constructor: function(args)
       {
@@ -40,10 +41,7 @@ define([
         return Util.deepUpdate(dojo.clone(this.inherited(arguments)),
             {
                 onHighlightClick: function (feature, track, event) {
-                    // this is wear we define the types of labels, to create a new kind of
                     const states = ['peakStart', 'peakEnd', 'noPeak'];
-                    // label add to this list and the two down below for determining the color
-                    // loops through known labels for the label clicked
                     for(let i = 0; i < states.length; i++)
                     {
                         if( feature.get('label') === states[i] )
@@ -63,8 +61,60 @@ define([
                     }
                 },
                 onHighlightRightClick: function( feature, track, event ) {
-                    // json of information of removed label
-                    let menu = new Menu()
+                    const states = ['peakStart', 'peakEnd', 'noPeak'];
+
+                    let redrawAllCallback = () => {
+                        track.browser.view.redrawTracks();
+                    }
+
+                    let redrawCallback = () => {
+                        track.redraw()
+                    }
+
+                    let menu = new Menu();
+
+                    let updateSingleMenu = new Menu();
+                    states.forEach(state => {
+                        updateSingleMenu.addChild(new MenuItem({
+                            label: state,
+                            onClick: (e) => {
+                                let args = {
+                                'ref': feature.get('ref'),
+                                'start': feature.get('start'),
+                                'end': feature.get('end'),
+                                'label': e.target.innerText
+                                }
+                                this.highlightStore.updateFeature(args, redrawCallback);
+                            }
+                        }));
+                    });
+
+                    menu.addChild(new PopupMenuItem({
+                        label: 'Change Label',
+                        popup: updateSingleMenu
+                    }))
+
+                    let updateAlignedMenu = new Menu();
+                    states.forEach(state => {
+                        updateAlignedMenu.addChild(new MenuItem({
+                            label: state,
+                            onClick: (e) => {
+                                let args = {
+                                'ref': feature.get('ref'),
+                                'start': feature.get('start'),
+                                'end': feature.get('end'),
+                                'label': e.target.innerText
+                                }
+                                this.highlightStore.updateAlignedFeatures(args, redrawAllCallback);
+                            }
+                        }));
+                    });
+
+                    menu.addChild(new PopupMenuItem({
+                        label: 'Change Visible Aligned Labels',
+                        popup: updateAlignedMenu
+                    }))
+
                     menu.addChild(new MenuItem({
                         label: "Delete Label",
                         iconClass: "dijitIconDelete",
@@ -74,12 +124,23 @@ define([
                              'ref': feature.get('ref'),
                              'start': feature.get('start'),
                              'end': feature.get('end')};
-                         let redrawCallback = () => {
-                             track.redraw()
-                         }
-
                          this.highlightStore.removeFeature(removeJSON, redrawCallback);
                         }}))
+
+                    menu.addChild(new MenuItem({
+                        label: "Delete Aligned Labels",
+                        iconClass: "dijitIconDelete",
+                        onClick: (e) =>
+                        {
+                         let removeJSON = {
+                             'ref': feature.get('ref'),
+                             'start': feature.get('start'),
+                             'end': feature.get('end')};
+
+                         this.highlightStore.removeAlignedFeatures(removeJSON, redrawAllCallback)
+                        }
+                    }))
+
                     menu.startup();
                     menu.bindDomNode(event.target)
                 },
