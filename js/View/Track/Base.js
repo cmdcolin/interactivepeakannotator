@@ -17,24 +17,27 @@ define([
   return declare(FeatureDetailMixin, {
       constructor: function(args)
       {
-        let newLabel = (data) => {
-            if (data.length) {
-                // add new highlight to storage
-                var dataVal = data[0];
-                dataVal['name'] = this.name;
-                let addCallback = function(data){
-                    //console.log(data);
-                }
-                if(this.shown){
-                    let currentLabel = dijit.byId('current-label');
-                    dataVal['label'] = currentLabel.value;
-                    this.highlightStore.addFeature(dataVal, addCallback);
-                }
-                this.browser.clearHighlight();
-                this.browser.view.behaviorManager.swapBehaviors('highlightingMouse', 'normalMouse');
-            }
+          let thisB = this;
+          let newLabel = (data) => {
+              if (data.length) {
+                  // add new highlight to storage
+                  var dataVal = data[0];
+                  dataVal['name'] = this.name;
+                  let addCallback = function(data){
+                      //console.log(data);
+                  }
 
-        };
+                  let keys = Object.keys(this.browser.view.trackIndices);
+
+                  if(keys.includes(this.key)){
+                      let currentLabel = dijit.byId('current-label');
+                      dataVal['label'] = currentLabel.value;
+                      this.highlightStore.addFeature(dataVal, addCallback);
+                  }
+                  this.browser.clearHighlight();
+                  this.browser.view.behaviorManager.swapBehaviors('highlightingMouse', 'normalMouse');
+              }
+          };
         dojo.subscribe('/jbrowse/v1/n/globalHighlightChanged', newLabel)
     },
     _defaultConfig: function () {
