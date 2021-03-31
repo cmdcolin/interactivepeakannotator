@@ -45,26 +45,6 @@ define([
             {
                 onHighlightClick: function (feature, track, event) {
                     const states = ['peakStart', 'peakEnd', 'noPeak'];
-                    for(let i = 0; i < states.length; i++)
-                    {
-                        if( feature.get('label') === states[i] )
-                        {
-                            let args = {
-                                'ref': feature.get('ref'),
-                                'start': feature.get('start'),
-                                'end': feature.get('end'),
-                                'label': states[(i+1)%states.length]
-                            }
-                            let redrawCallback = () => {
-                                track.redraw()
-                            }
-                            this.highlightStore.updateFeature(args, redrawCallback);
-                            break;
-                        }
-                    }
-                },
-                onHighlightRightClick: function( feature, track, event ) {
-                    const states = ['peakStart', 'peakEnd', 'noPeak'];
 
                     let redrawAllCallback = () => {
                         track.browser.view.redrawTracks();
