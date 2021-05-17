@@ -15,12 +15,33 @@ define([
     'JBrowse/View/Track/_FeatureDetailMixin',
 ], function (declare, parser, on, mouse, dom, domConstruct, Dialog, Select, Util, Menu, MenuItem, PopupMenuItem, BigBed, FeatureDetailMixin) {
     return declare(FeatureDetailMixin, {
+        constructor: function (args) {
+            let newLabel = (data) => {
+                if (data.length) {
+                    var dataVal = data[0];
+                    dataVal['name'] = this.name;
+                    let addCallback = function (data) {
+                        //console.log(data);
+                    }
+
+                    let keys = Object.keys(this.browser.view.trackIndices);
+
+                    if (keys.includes(this.key)) {
+                        let currentLabel = dijit.byId('current-label');
+                        dataVal['label'] = currentLabel.value;
+                        this.highlightStore.addFeature(dataVal, addCallback);
+                    }
+                    this.browser.clearHighlight();
+                    this.browser.view.behaviorManager.swapBehaviors('highlightingMouse', 'normalMouse');
+                }
+            };
+            dojo.subscribe('/jbrowse/v1/n/globalHighlightChanged', newLabel)
+        },
         _defaultConfig: function () {
             return Util.deepUpdate(dojo.clone(this.inherited(arguments)),
                 {
                     showLabels: true,
                     dojoMenu: true,
-                    IPA: true,
                     onHighlightClick: function (feature, track, event) {
                     },
                     highlightColor: function (feature, track) {
@@ -54,6 +75,7 @@ define([
 
                     addMenu: function(track, feature, highlight)
                     {
+                        console.log('addMenu')
                         const states = ['peakStart', 'peakEnd', 'noPeak'];
 
                         let redrawAllCallback = () => {
