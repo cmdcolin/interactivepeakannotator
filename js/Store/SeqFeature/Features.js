@@ -22,10 +22,10 @@ function (
 ) {
     return declare([ SeqFeatureStore ], {
         getFeatures(query, featureCallback, finishedCallback, errorCallback) {
-
             var features = localStorage.getItem(this.config.label);
             if(features)
             {
+                console.log(features)
                 features = JSON.parse(features);
                 features.forEach(data => {
                    featureCallback(new SimpleFeature({data}))
