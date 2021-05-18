@@ -35,13 +35,17 @@ define([
                     this.browser.view.behaviorManager.swapBehaviors('highlightingMouse', 'normalMouse');
                 }
             };
-            dojo.subscribe('/jbrowse/v1/n/globalHighlightChanged', newLabel)
+            if(!this.config.addBackend)
+            {
+                dojo.subscribe('/jbrowse/v1/n/globalHighlightChanged', newLabel)
+            }
         },
         _defaultConfig: function () {
             return Util.deepUpdate(dojo.clone(this.inherited(arguments)),
                 {
                     showLabels: true,
                     dojoMenu: true,
+                    addBackend: false,
                     onHighlightClick: function (feature, track, event) {
                     },
                     highlightColor: function (feature, track) {
@@ -75,7 +79,6 @@ define([
 
                     addMenu: function(track, feature, highlight)
                     {
-                        console.log('addMenu')
                         const states = ['peakStart', 'peakEnd', 'noPeak'];
 
                         let redrawAllCallback = () => {
